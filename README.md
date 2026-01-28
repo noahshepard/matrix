@@ -2,11 +2,13 @@
 
 Small C++ matrix library with basic linear-algebra utilities (RREF used by tests and the example app).
 
-## Features
-- Matrix type with initializer-list construction.
-- rref() to compute reduced-row echelon form.
-- Header-only public include at `lib/include/matrix/matrix.hpp`.
-- Built as `matrix` static library and used by `app` and `tests`.
+## Features 
+- `Matrix` class that encapsulates Matrix Definiton
+- `.rows()` and `.cols()` methods to get size
+- Access elements via `A(Row#, Col#)`
+- Compute Reduced Row Echelon Form via `.rref()`
+- Baisc Operators / Constructors for interacting with matrices
+- Private member functions for row operations; `swap_rows(..)`, `scale_row(..)`, `add_row_multiple(..)`
 
 ## Project layout
 - lib/ — library sources and public headers (`lib/include/matrix/matrix.hpp`)
