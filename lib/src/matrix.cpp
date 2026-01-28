@@ -87,6 +87,36 @@ bool Matrix::operator!=(const Matrix &other) const
     return !(*this == other);
 }
 
+Matrix Matrix::operator+(const Matrix &other) const
+{
+    if (rows_ != other.rows_ || cols_ != other.cols_)
+        throw std::invalid_argument("Matrix dimensions must match for addition");
+
+    Matrix result(rows_, cols_);
+
+    for (size_t i = 0; i < data_.size(); ++i)
+    {
+        result.data_[i] = data_[i] + other.data_[i];
+    }
+
+    return result;
+}
+
+Matrix Matrix::operator-(const Matrix &other) const
+{
+    if (rows_ != other.rows_ || cols_ != other.cols_)
+        throw std::invalid_argument("Matrix dimensions must match for subtraction");
+
+    Matrix result(rows_, cols_);
+
+    for (size_t i = 0; i < data_.size(); ++i)
+    {
+        result.data_[i] = data_[i] - other.data_[i];
+    }
+
+    return result;
+}
+
 size_t Matrix::rows() const
 {
     return rows_;
@@ -192,4 +222,19 @@ std::ostream &operator<<(std::ostream &os, const Matrix &m)
         os << "]\n";
     }
     return os;
+}
+
+Matrix operator*(const Matrix &m, double f)
+{
+    Matrix result(m.rows_, m.cols_);
+    for (size_t i = 0; i < m.data_.size(); ++i)
+    {
+        result.data_[i] = m.data_[i] * f;
+    }
+    return result;
+}
+
+Matrix operator*(double f, const Matrix &m)
+{
+    return m * f;
 }

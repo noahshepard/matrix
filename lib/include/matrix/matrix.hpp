@@ -18,6 +18,9 @@ public:
     bool operator==(const Matrix &other) const;
     bool operator!=(const Matrix &other) const;
 
+    Matrix operator+(const Matrix &other) const;
+    Matrix operator-(const Matrix &other) const;
+
     size_t rows() const;
     size_t cols() const;
 
@@ -29,6 +32,9 @@ private:
     void add_row_multiple(size_t src, size_t dst, double scalar);
 
     friend std::ostream &operator<<(std::ostream &os, const Matrix &m);
+
+    friend Matrix operator*(const Matrix &m, double f);
+    friend Matrix operator*(double f, const Matrix &m);
 
     size_t rows_;
     size_t cols_;

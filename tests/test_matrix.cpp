@@ -289,3 +289,92 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_pair(6, 4),
         std::make_pair(4, 6),
         std::make_pair(10, 10)));
+
+// Matrix Operation Tests
+
+TEST(MatrixOperations, Addition)
+{
+    Matrix A({{1, 2}, {3, 4}});
+    Matrix B({{5, 6}, {7, 8}});
+    Matrix C = A + B;
+
+    Matrix C_expected({{6, 8}, {10, 12}});
+    EXPECT_EQ(C, C_expected);
+}
+
+TEST(MatrixOperations, Subtraction)
+{
+    Matrix A({{5, 6}, {7, 8}});
+    Matrix B({{1, 2}, {3, 4}});
+    Matrix C = A - B;
+
+    Matrix C_expected({{4, 4}, {4, 4}});
+    EXPECT_EQ(C, C_expected);
+}
+
+TEST(MatrixOperations, Addition_InvalidDimensions)
+{
+    Matrix A({{1, 2}, {3, 4}});
+    Matrix B({{5, 6, 7}, {8, 9, 10}});
+
+    EXPECT_THROW({ Matrix C = A + B; }, std::invalid_argument);
+}
+
+TEST(MatrixOperations, Subtraction_InvalidDimensions)
+{
+    Matrix A({{1, 2}, {3, 4}});
+    Matrix B({{5, 6, 7}, {8, 9, 10}});
+
+    EXPECT_THROW({ Matrix C = A - B; }, std::invalid_argument);
+}
+
+TEST(MatrixOperations, Addition_NegativeValues)
+{
+    Matrix A({{-1, -2}, {-3, -4}});
+    Matrix B({{5, 6}, {7, 8}});
+    Matrix C = A + B;
+
+    Matrix C_expected({{4, 4}, {4, 4}});
+    EXPECT_EQ(C, C_expected);
+}
+
+TEST(MatrixOperations, Subtraction_NegativeValues)
+{
+    Matrix A({{5, 6}, {7, 8}});
+    Matrix B({{-1, -2}, {-3, -4}});
+    Matrix C = A - B;
+
+    Matrix C_expected({{6, 8}, {10, 12}});
+    EXPECT_EQ(C, C_expected);
+}
+
+TEST(MatrixOperations, Addition_ZeroMatrix)
+{
+    Matrix A({{0, 0}, {0, 0}});
+    Matrix B({{5, 6}, {7, 8}});
+    Matrix C = A + B;
+
+    EXPECT_EQ(C, B);
+}
+
+TEST(MatrixOperations, Subtraction_ZeroMatrix)
+{
+    Matrix A({{0, 0}, {0, 0}});
+    Matrix B({{5, 6}, {7, 8}});
+    Matrix C = B - A;
+
+    EXPECT_EQ(C, B);
+}
+
+TEST(MatrixOperations, ScalarMultiplication_FriendFunction)
+{
+    Matrix A({{1, 2}, {3, 4}});
+    double scalar = 2.0;
+
+    Matrix B = A * scalar;
+    Matrix C = scalar * A;
+
+    Matrix expected({{2, 4}, {6, 8}});
+    EXPECT_EQ(B, expected);
+    EXPECT_EQ(C, expected);
+}
