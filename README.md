@@ -13,6 +13,12 @@ Small C++ matrix library with basic linear-algebra utilities (RREF used by tests
 - app/ — example application using the library
 - tests/ — Google Test unit tests (tests/test_matrix.cpp)
 - CMakeLists.txt — top-level build configuration
+  
+## Testing 
+- Uses Google Test for Unit Tests
+- Confirms RREF for edge cases
+- Checks if the RREF of random matrices is correct
+- Unit Tests for `isRREF` Function
 
 ## Build (macOS / POSIX)
 ```bash
