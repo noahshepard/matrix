@@ -1,5 +1,0 @@
-MatrixRREF.SimpleAugmented2x3 5 0.00783782
-MatrixRREF.AugmentedWithZeroRow 3 0.00759426
-MatrixRREF.RankDeficientAugmented 5 0.00771791
-MatrixRREF.FullAugmented3x4 5 0.0079428
----
