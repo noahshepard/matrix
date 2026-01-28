@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "matrix/matrix.hpp"
-
-constexpr double EPS = 1e-9;
+#include "constants.hpp"
+#include <random>
 
 // Helper to compare doubles with EPS tolerance
 void EXPECT_DOUBLE_EQ_EPS(double a, double b)
@@ -9,7 +9,108 @@ void EXPECT_DOUBLE_EQ_EPS(double a, double b)
     EXPECT_NEAR(a, b, EPS);
 }
 
-// Test 1: Simple 2x3 system (unique solution)
+bool isRREF(const Matrix &m)
+{
+    // Check for RREF properties
+    // 1. Leading 1s
+    // 2. Zeros below and above leading 1s
+    // 3. Each leading 1 is to the right of the leading 1 in the previous row
+    // 4. Rows of all zeros at the bottom
+    // 5. Leading 1s are the only non-zero entries in their columns
+
+    int last_pivot_col = -1;
+    bool found_zero_row = false;
+
+    for (size_t r = 0; r < m.rows(); ++r)
+    {
+        // Find first non-zero element in this row
+        int pivot_col = -1;
+        for (size_t c = 0; c < m.cols(); ++c)
+        {
+            if (std::abs(m(r, c)) > EPS)
+            {
+                pivot_col = c;
+                break;
+            }
+        }
+
+        // If all zeros in this row
+        if (pivot_col == -1)
+        {
+            found_zero_row = true;
+            continue;
+        }
+
+        // If we found a non-zero row after a zero row, invalid
+        if (found_zero_row)
+            return false;
+
+        // First non-zero must be 1
+        if (std::abs(m(r, pivot_col) - 1.0) > EPS)
+            return false;
+
+        // Pivot column must be to the right of previous pivot
+        if (pivot_col <= last_pivot_col)
+            return false;
+
+        // All other entries in this pivot column must be zero
+        for (size_t rr = 0; rr < m.rows(); ++rr)
+        {
+            if (rr != r && std::abs(m(rr, pivot_col)) > EPS)
+                return false;
+        }
+
+        last_pivot_col = pivot_col;
+    }
+
+    return true;
+}
+
+TEST(isRREF_Test, ValidRREF)
+{
+    Matrix A({{1, 0, 2, 0},
+              {0, 1, -1, 0},
+              {0, 0, 0, 0}});
+
+    EXPECT_TRUE(isRREF(A));
+}
+
+TEST(isRREF_Test, InvalidRREF_NonLeadingOne)
+{
+    Matrix A({{2, 0, 2, 0},
+              {0, 1, -1, 0},
+              {0, 0, 0, 0}});
+
+    EXPECT_FALSE(isRREF(A));
+}
+
+TEST(isRREF_Test, InvalidRREF_NonZeroAbovePivot)
+{
+    Matrix A({{1, 0, 2, 0},
+              {0, 1, -1, 0},
+              {0, 1, 0, 0}});
+
+    EXPECT_FALSE(isRREF(A));
+}
+
+TEST(isRREF_Test, InvalidRREF_PivotNotRight)
+{
+    Matrix A({{1, 0, 2, 0},
+              {0, 0, 1, 0},
+              {0, 0, 0, 0}});
+
+    EXPECT_FALSE(isRREF(A));
+}
+
+TEST(isRREF_Test, InvalidRREF_NonZeroRowBelowZeroRow)
+{
+    Matrix A({{1, 0, 2, 0},
+              {0, 0, 0, 0},
+              {0, 1, -1, 0}});
+
+    EXPECT_FALSE(isRREF(A));
+}
+
 TEST(MatrixRREF, SimpleAugmented2x3)
 {
     Matrix A({{1, 2, 1, 9},
@@ -26,7 +127,6 @@ TEST(MatrixRREF, SimpleAugmented2x3)
     EXPECT_DOUBLE_EQ_EPS(A(1, 1), 1.0);
 }
 
-// Test 2: 3x4 system with zero row
 TEST(MatrixRREF, AugmentedWithZeroRow)
 {
     Matrix A({{1, 2, 1, 9},
@@ -35,14 +135,12 @@ TEST(MatrixRREF, AugmentedWithZeroRow)
 
     A.rref();
 
-    // The first two rows should be normalized, last row all zeros
     EXPECT_DOUBLE_EQ_EPS(A(0, 0), 1.0);
     for (size_t r = 1; r < A.rows(); ++r)
         for (size_t c = 0; c < A.cols(); ++c)
             EXPECT_DOUBLE_EQ_EPS(A(r, c), 0.0);
 }
 
-// Test 3: Rank-deficient system
 TEST(MatrixRREF, RankDeficientAugmented)
 {
     Matrix A({{1, 2, 3, 6},
@@ -51,14 +149,12 @@ TEST(MatrixRREF, RankDeficientAugmented)
 
     A.rref();
 
-    // Only first row should have pivot = 1, other rows all zeros
     EXPECT_DOUBLE_EQ_EPS(A(0, 0), 1.0);
     for (size_t r = 1; r < A.rows(); ++r)
         for (size_t c = 0; c < A.cols(); ++c)
             EXPECT_DOUBLE_EQ_EPS(A(r, c), 0.0);
 }
 
-// Test 4: 3x4 system with unique solution
 TEST(MatrixRREF, FullAugmented3x4)
 {
     Matrix A({{2, 1, -1, 8},
@@ -67,8 +163,129 @@ TEST(MatrixRREF, FullAugmented3x4)
 
     A.rref();
 
-    // Expected solution: x=2, y=3, z=-1
     EXPECT_DOUBLE_EQ_EPS(A(0, 3), 2.0);  // x
     EXPECT_DOUBLE_EQ_EPS(A(1, 3), 3.0);  // y
     EXPECT_DOUBLE_EQ_EPS(A(2, 3), -1.0); // z
 }
+
+TEST(MatrixRREF, ZeroMatrix)
+{
+    Matrix A({{0, 0, 0},
+              {0, 0, 0},
+              {0, 0, 0}});
+
+    A.rref();
+
+    for (size_t r = 0; r < A.rows(); ++r)
+        for (size_t c = 0; c < A.cols(); ++c)
+            EXPECT_DOUBLE_EQ_EPS(A(r, c), 0.0);
+}
+
+TEST(MatrixRREF, IdentityMatrix)
+{
+    Matrix A({{1, 0, 0},
+              {0, 1, 0},
+              {0, 0, 1}});
+
+    A.rref();
+
+    for (size_t r = 0; r < A.rows(); ++r)
+        for (size_t c = 0; c < A.cols(); ++c)
+            EXPECT_DOUBLE_EQ_EPS(A(r, c), (r == c) ? 1.0 : 0.0);
+}
+
+TEST(MatrixRREF, InconsistentSystem)
+{
+    Matrix A({{1, 2, 3, 4},
+              {2, 4, 6, 9}});
+
+    A.rref();
+
+    // The last row should reflect the inconsistency
+    EXPECT_DOUBLE_EQ_EPS(A(1, 0), 0.0);
+    EXPECT_DOUBLE_EQ_EPS(A(1, 1), 0.0);
+    EXPECT_DOUBLE_EQ_EPS(A(1, 2), 0.0);
+    EXPECT_DOUBLE_EQ_EPS(A(1, 3), 1.0);
+}
+
+TEST(MatrixRREF, FreeVariables)
+{
+    Matrix A({{2, 1, 3, 0, 10},
+              {1, 1, 1, 0, 7},
+              {3, 2, 4, 0, 17}});
+
+    Matrix U({{1, 0, 2, 0, 3},
+              {0, 1, -1, 0, 4},
+              {0, 0, 0, 0, 0}});
+    A.rref();
+
+    EXPECT_EQ(A, U);
+}
+
+TEST(MatrixRREF, DimensionsPreserved)
+{
+    Matrix A({{1, 2, 3},
+              {4, 5, 6}});
+
+    size_t original_rows = A.rows();
+    size_t original_cols = A.cols();
+
+    A.rref();
+
+    EXPECT_EQ(A.rows(), original_rows);
+    EXPECT_EQ(A.cols(), original_cols);
+}
+
+TEST(MatrixRREF, ZeroAtBottom)
+{
+    Matrix A({{0, 0, 0, 0},
+              {1, 0, 0, 4},
+              {0, 1, 7, 8}});
+
+    A.rref();
+
+    Matrix U({{1, 0, 0, 4},
+              {0, 1, 7, 8},
+              {0, 0, 0, 0}});
+    EXPECT_EQ(A, U);
+}
+
+class MatrixRREF_RandomTest : public ::testing::TestWithParam<std::pair<int, int>>
+{
+protected:
+    std::mt19937 gen{std::random_device{}()};
+    std::uniform_real_distribution<> dis{-100.0, 100.0};
+};
+
+TEST_P(MatrixRREF_RandomTest, RandomMatrices)
+{
+    auto [rows, cols] = GetParam();
+    Matrix A(rows, cols);
+    for (size_t r = 0; r < rows; ++r)
+    {
+        for (size_t c = 0; c < cols; ++c)
+        {
+            // A(r, c) = dis(gen);
+            A(r, c) = static_cast<double>(r + c + 1); // simpler deterministic values for test stability
+        }
+    }
+
+    A.rref();
+
+    EXPECT_TRUE(isRREF(A)) << "Failed for " << rows << "x" << cols << " random matrix:\n"
+                           << A;
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    RandomMatrices,
+    MatrixRREF_RandomTest,
+    ::testing::Values(
+        std::make_pair(2, 2),
+        std::make_pair(3, 3),
+        std::make_pair(4, 4),
+        std::make_pair(5, 5),
+        std::make_pair(3, 5),
+        std::make_pair(5, 3),
+        std::make_pair(6, 4),
+        std::make_pair(4, 6),
+        std::make_pair(10, 10)));

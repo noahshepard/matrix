@@ -68,6 +68,25 @@ double Matrix::operator()(size_t rows, size_t cols) const
     return data_[rows * cols_ + cols];
 }
 
+bool Matrix::operator==(const Matrix &other) const
+{
+    if (rows_ != other.rows_ || cols_ != other.cols_)
+        return false;
+
+    for (size_t i = 0; i < data_.size(); ++i)
+    {
+        if (std::abs(data_[i] - other.data_[i]) > EPS)
+            return false;
+    }
+
+    return true;
+}
+
+bool Matrix::operator!=(const Matrix &other) const
+{
+    return !(*this == other);
+}
+
 size_t Matrix::rows() const
 {
     return rows_;

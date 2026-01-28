@@ -15,6 +15,9 @@ public:
     double &operator()(size_t rows, size_t cols);
     double operator()(size_t rows, size_t cols) const;
 
+    bool operator==(const Matrix &other) const;
+    bool operator!=(const Matrix &other) const;
+
     size_t rows() const;
     size_t cols() const;
 
