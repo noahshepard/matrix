@@ -5,7 +5,7 @@ Small C++ matrix library with basic linear-algebra utilities (RREF used by tests
 ## Features 
 - `Matrix` class that encapsulates Matrix Definiton
 - `.rows()` and `.cols()` methods to get size
-- Access elements via `A(Row#, Col#)`
+- Access elements via `<matrix>(<row#>, <col#>)`
 - Compute Reduced Row Echelon Form via `.rref()`
 - Baisc Operators / Constructors for interacting with matrices
 - Private member functions for row operations; `swap_rows(..)`, `scale_row(..)`, `add_row_multiple(..)`
