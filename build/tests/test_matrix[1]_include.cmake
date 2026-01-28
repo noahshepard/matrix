@@ -1,0 +1,5 @@
+if(EXISTS "/Users/noahshepard/Projects/matrix/build/tests/test_matrix[1]_tests.cmake")
+  include("/Users/noahshepard/Projects/matrix/build/tests/test_matrix[1]_tests.cmake")
+else()
+  add_test(test_matrix_NOT_BUILT test_matrix_NOT_BUILT)
+endif()
