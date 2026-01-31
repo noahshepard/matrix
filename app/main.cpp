@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
                 A(r, c) = std::stod(argv[arg_index++]);
             }
         }
+        std::cout << "Input matrix:\n"
+                  << A << "\n";
 
         A.rref();
         std::cout << "RREF of the matrix:\n"

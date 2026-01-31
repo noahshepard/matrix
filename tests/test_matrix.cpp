@@ -378,3 +378,124 @@ TEST(MatrixOperations, ScalarMultiplication_FriendFunction)
     EXPECT_EQ(B, expected);
     EXPECT_EQ(C, expected);
 }
+
+TEST(MatrixOperations, ScalarMultiplication_NegativeScalar)
+{
+    Matrix A({{1, -2}, {-3, 4}});
+    double scalar = -2.0;
+
+    Matrix B = A * scalar;
+    Matrix C = scalar * A;
+
+    Matrix expected({{-2, 4}, {6, -8}});
+    EXPECT_EQ(B, expected);
+    EXPECT_EQ(C, expected);
+}
+
+TEST(MatrixOperations, ScalarMultiplication_ZeroScalar)
+{
+    Matrix A({{1, 2}, {3, 4}});
+    double scalar = 0.0;
+
+    Matrix B = A * scalar;
+    Matrix C = scalar * A;
+
+    Matrix expected({{0, 0}, {0, 0}});
+    EXPECT_EQ(B, expected);
+    EXPECT_EQ(C, expected);
+}
+
+TEST(MatrixOperations, ScalarMultiplication_FractionalScalar)
+{
+    Matrix A({{2, 4}, {6, 8}});
+    double scalar = 0.5;
+
+    Matrix B = A * scalar;
+    Matrix C = scalar * A;
+
+    Matrix expected({{1, 2}, {3, 4}});
+    EXPECT_EQ(B, expected);
+    EXPECT_EQ(C, expected);
+}
+
+TEST(MatrixOperations, ScalarDivision_FriendFunction)
+{
+    Matrix A({{2, 4}, {6, 8}});
+    double scalar = 2.0;
+
+    Matrix B = A / scalar;
+
+    Matrix expected({{1, 2}, {3, 4}});
+    EXPECT_EQ(B, expected);
+}
+
+TEST(MatrixOperations, ScalarDivision_ByZero)
+{
+    Matrix A({{2, 4}, {6, 8}});
+    double scalar = 0.0;
+
+    EXPECT_THROW({ Matrix B = A / scalar; }, std::invalid_argument);
+}
+
+TEST(MatrixOperations, ScalarDivision_NegativeScalar)
+{
+    Matrix A({{2, -4}, {-6, 8}});
+    double scalar = -2.0;
+
+    Matrix B = A / scalar;
+
+    Matrix expected({{-1, 2}, {3, -4}});
+    EXPECT_EQ(B, expected);
+}
+
+TEST(MatrixOperations, ScalarDivision_FractionalScalar)
+{
+    Matrix A({{1, 2}, {3, 4}});
+    double scalar = 0.5;
+
+    Matrix B = A / scalar;
+
+    Matrix expected({{2, 4}, {6, 8}});
+    EXPECT_EQ(B, expected);
+}
+
+TEST(MatrixCreation, From2DVector_NonRectangular)
+{
+    std::vector<std::vector<double>> values = {
+        {1, 2, 3},
+        {4, 5},
+        {6, 7, 8}};
+
+    EXPECT_THROW({ Matrix A(values); }, std::invalid_argument);
+}
+
+TEST(MatrixCreation, From2DVector_Empty)
+{
+    std::vector<std::vector<double>> values = {};
+
+    EXPECT_THROW({ Matrix A(values); }, std::invalid_argument);
+}
+
+TEST(MatrixCreation, From1DVector_InvalidSize)
+{
+    std::vector<double> values = {1, 2, 3, 4, 5};
+
+    EXPECT_THROW({ Matrix A(2, 3, values); }, std::invalid_argument);
+}
+
+TEST(MatrixCreation, From1DVector_Empty)
+{
+    std::vector<double> values = {};
+
+    EXPECT_THROW({ Matrix A(2, 2, values); }, std::invalid_argument);
+}
+
+TEST(MatrixAccess, OutOfBounds)
+{
+    Matrix A({{1, 2}, {3, 4}});
+
+    EXPECT_THROW({ double val = A(2, 0); }, std::invalid_argument);
+    EXPECT_THROW({ double val = A(0, 2); }, std::invalid_argument);
+    EXPECT_THROW({ A(2, 0) = 5; }, std::invalid_argument);
+    EXPECT_THROW({ A(0, 2) = 5; }, std::invalid_argument);
+}

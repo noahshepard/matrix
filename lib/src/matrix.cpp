@@ -238,3 +238,13 @@ Matrix operator*(double f, const Matrix &m)
 {
     return m * f;
 }
+
+Matrix operator/(const Matrix &m, double f)
+{
+    if (std::abs(f) < EPS)
+    {
+        throw std::invalid_argument("Division by zero");
+    }
+
+    return m * (1.0 / f);
+}

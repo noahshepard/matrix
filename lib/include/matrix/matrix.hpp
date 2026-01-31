@@ -36,6 +36,8 @@ private:
     friend Matrix operator*(const Matrix &m, double f);
     friend Matrix operator*(double f, const Matrix &m);
 
+    friend Matrix operator/(const Matrix &m, double f);
+
     size_t rows_;
     size_t cols_;
     std::vector<double> data_;
