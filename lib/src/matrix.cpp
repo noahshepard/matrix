@@ -117,6 +117,34 @@ Matrix Matrix::operator-(const Matrix &other) const
     return result;
 }
 
+Matrix Matrix::operator*(const Matrix &other) const
+{
+    if (this->cols() != other.rows())
+    {
+        throw std::invalid_argument("The number of cols in the first matrix must match the number of rows in the second for multiplication");
+    }
+
+    Matrix result(this->rows(), other.cols());
+
+    const size_t M = this->rows();
+    const size_t P = other.cols();
+    const size_t N = this->cols();
+
+    for (size_t i = 0; i < M; ++i)
+    {
+        for (size_t j = 0; j < P; ++j)
+        {
+            double product = 0;
+            for (size_t k = 0; k < N; ++k)
+            {
+                product += (*this)(i, k) * other(k, j);
+            }
+            result(i, j) = product;
+        }
+    }
+    return result;
+}
+
 size_t Matrix::rows() const
 {
     return rows_;
@@ -164,6 +192,46 @@ void Matrix::add_row_multiple(size_t src, size_t dst, double scalar)
     {
         dst_begin[i] += scalar * src_begin[i];
     }
+}
+
+Matrix Matrix::inverse() const
+{
+    if (this->rows() != this->cols())
+    {
+        throw std::invalid_argument("Matrix must be square for inverse");
+    }
+    Matrix appended(this->rows(), 2 * this->cols());
+    for (int i = 0; i < appended.rows(); ++i)
+    {
+        for (int j = 0; j < appended.cols(); ++j)
+        {
+            if (j < this->cols())
+            {
+                appended(i, j) = (*this)(i, j);
+            }
+            else if (j == i + this->cols())
+            {
+                appended(i, j) = 1;
+            }
+            else
+            {
+                appended(i, j) = 0;
+            }
+        }
+    }
+
+    appended.rref();
+
+    Matrix result(this->rows(), this->cols());
+
+    for (int i = 0; i < result.rows(); ++i)
+    {
+        for (int j = 0; j < result.rows(); ++j)
+        {
+            result(i, j) = appended(i, j + result.cols());
+        }
+    }
+    return result;
 }
 
 void Matrix::rref()

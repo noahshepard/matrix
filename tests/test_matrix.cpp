@@ -459,6 +459,96 @@ TEST(MatrixOperations, ScalarDivision_FractionalScalar)
     EXPECT_EQ(B, expected);
 }
 
+TEST(MatrixOperations, Multiplication)
+{
+    Matrix A({{1, 2, 3},
+              {4, 5, 6}});
+    Matrix B({{7, 8},
+              {9, 10},
+              {11, 12}});
+    Matrix C = A * B;
+
+    Matrix C_expected({{58, 64},
+                       {139, 154}});
+    EXPECT_EQ(C, C_expected);
+}
+
+TEST(MatrixOperations, Multiplication_InvalidDimensions)
+{
+    Matrix A({{1, 2, 3}, {4, 5, 6}});
+    Matrix B({{5, 6}, {7, 8}});
+
+    EXPECT_THROW({ Matrix C = A * B; }, std::invalid_argument);
+}
+
+TEST(MatrixOperations, Inverse)
+{
+    Matrix A({{4, 7},
+              {2, 6}});
+    Matrix A_inv = A.inverse();
+
+    Matrix A_inv_expected({{0.6, -0.7},
+                           {-0.2, 0.4}});
+    for (size_t r = 0; r < A_inv.rows(); ++r)
+    {
+        for (size_t c = 0; c < A_inv.cols(); ++c)
+        {
+            EXPECT_DOUBLE_EQ_EPS(A_inv(r, c), A_inv_expected(r, c));
+        }
+    }
+}
+
+TEST(MatrixOperations, InverseIdentity)
+{
+    Matrix I({{1, 0},
+              {0, 1}});
+    Matrix I_inv = I.inverse();
+
+    EXPECT_EQ(I_inv, I);
+}
+
+TEST(MatrixOperations, InverseMultIsIdentity)
+{
+    Matrix A({{3, 0},
+              {0, 2}});
+    Matrix A_inv = A.inverse();
+    Matrix I = A * A_inv;
+
+    Matrix I_expected({{1, 0},
+                       {0, 1}});
+    for (size_t r = 0; r < I.rows(); ++r)
+    {
+        for (size_t c = 0; c < I.cols(); ++c)
+        {
+            EXPECT_DOUBLE_EQ_EPS(I(r, c), I_expected(r, c));
+        }
+    }
+}
+
+TEST(MatrixOperations, InverseNonSquareMatrix)
+{
+    Matrix A({{1, 2, 3},
+              {4, 5, 6}});
+
+    EXPECT_THROW({ Matrix A_inv = A.inverse(); }, std::invalid_argument);
+}
+
+TEST(MatrixCreation, From2DVector_Valid)
+{
+    std::vector<std::vector<double>> values = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}};
+
+    Matrix A(values);
+
+    EXPECT_EQ(A.rows(), 3);
+    EXPECT_EQ(A.cols(), 3);
+    EXPECT_DOUBLE_EQ_EPS(A(0, 0), 1.0);
+    EXPECT_DOUBLE_EQ_EPS(A(1, 1), 5.0);
+    EXPECT_DOUBLE_EQ_EPS(A(2, 2), 9.0);
+}
+
 TEST(MatrixCreation, From2DVector_NonRectangular)
 {
     std::vector<std::vector<double>> values = {

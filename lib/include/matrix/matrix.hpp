@@ -21,8 +21,12 @@ public:
     Matrix operator+(const Matrix &other) const;
     Matrix operator-(const Matrix &other) const;
 
+    Matrix operator*(const Matrix &other) const;
+
     size_t rows() const;
     size_t cols() const;
+
+    Matrix inverse() const;
 
     void rref();
 
