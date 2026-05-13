@@ -1,48 +1,57 @@
 #pragma once
 #include <cstddef>
-#include <vector>
+#include <optional>
 #include <stdexcept>
+#include <vector>
 
-class Matrix
-{
+class Matrix {
 public:
-    Matrix(size_t rows, size_t cols);
+  Matrix(size_t rows, size_t cols);
 
-    Matrix(const std::vector<std::vector<double>> &values);
+  Matrix(const std::vector<std::vector<double>> &values);
 
-    Matrix(size_t rows, size_t cols, const std::vector<double> &values);
+  Matrix(size_t rows, size_t cols, const std::vector<double> &values);
 
-    double &operator()(size_t rows, size_t cols);
-    double operator()(size_t rows, size_t cols) const;
+  Matrix(const Matrix &other) noexcept
+      : data_(other.data_), rows_(other.rows_), cols_(other.cols_) {}
 
-    bool operator==(const Matrix &other) const;
-    bool operator!=(const Matrix &other) const;
+  Matrix(Matrix &&other) noexcept
+      : data_(std::move(other.data_)), rows_(other.rows_), cols_(other.cols_) {}
 
-    Matrix operator+(const Matrix &other) const;
-    Matrix operator-(const Matrix &other) const;
+  explicit Matrix(size_t n);
 
-    Matrix operator*(const Matrix &other) const;
+  double &operator()(size_t rows, size_t cols);
+  double operator()(size_t rows, size_t cols) const;
 
-    size_t rows() const;
-    size_t cols() const;
+  bool operator==(const Matrix &other) const;
+  bool operator!=(const Matrix &other) const;
 
-    Matrix inverse() const;
+  Matrix operator+(const Matrix &other) const;
+  Matrix operator-(const Matrix &other) const;
 
-    void rref();
+  Matrix operator*(const Matrix &other) const;
+
+  size_t rows() const;
+  size_t cols() const;
+
+  std::optional<Matrix> inverse() const;
+  double determinant() const;
+
+  void rref();
 
 private:
-    void swap_rows(size_t r1, size_t r2);
-    void scale_row(size_t r, double scalar);
-    void add_row_multiple(size_t src, size_t dst, double scalar);
+  void swap_rows(size_t r1, size_t r2);
+  void scale_row(size_t r, double scalar);
+  void add_row_multiple(size_t src, size_t dst, double scalar);
 
-    friend std::ostream &operator<<(std::ostream &os, const Matrix &m);
+  friend std::ostream &operator<<(std::ostream &os, const Matrix &m);
 
-    friend Matrix operator*(const Matrix &m, double f);
-    friend Matrix operator*(double f, const Matrix &m);
+  friend Matrix operator*(const Matrix &m, double f);
+  friend Matrix operator*(double f, const Matrix &m);
 
-    friend Matrix operator/(const Matrix &m, double f);
+  friend Matrix operator/(const Matrix &m, double f);
 
-    size_t rows_;
-    size_t cols_;
-    std::vector<double> data_;
+  size_t rows_;
+  size_t cols_;
+  std::vector<double> data_;
 };
