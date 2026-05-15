@@ -2,15 +2,16 @@
 #include "constants.hpp"
 #include <iomanip>
 
-Matrix::Matrix(size_t rows, size_t cols)
+namespace linalg {
+matrix::matrix(size_t rows, size_t cols)
     : rows_(rows), cols_(cols), data_(rows * cols, 0.0) {
   if (rows == 0 || cols == 0)
-    throw std::invalid_argument("Matrix dimensions must be >0");
+    throw std::invalid_argument("matrix dimensions must be >0");
 }
 
-Matrix::Matrix(const std::vector<std::vector<double>> &values) {
+matrix::matrix(const std::vector<std::vector<double>> &values) {
   if (values.size() == 0 || values[0].size() == 0)
-    throw std::invalid_argument("Matrix dimensions must be >0");
+    throw std::invalid_argument("matrix dimensions must be >0");
   rows_ = values.size();
   cols_ = values[0].size();
 
@@ -18,7 +19,7 @@ Matrix::Matrix(const std::vector<std::vector<double>> &values) {
 
   for (size_t i = 0; i < rows_; ++i) {
     if (values[i].size() != cols_) {
-      throw std::invalid_argument("Matrix must be rectangular");
+      throw std::invalid_argument("matrix must be rectangular");
     }
 
     for (size_t j = 0; j < cols_; ++j) {
@@ -27,13 +28,13 @@ Matrix::Matrix(const std::vector<std::vector<double>> &values) {
   }
 }
 
-Matrix::Matrix(size_t rows, size_t cols, const std::vector<double> &values) {
+matrix::matrix(size_t rows, size_t cols, const std::vector<double> &values) {
   if (rows <= 0 || cols <= 0 || values.size() == 0) {
-    throw std::invalid_argument("Matrix dimensions must be >0");
+    throw std::invalid_argument("matrix dimensions must be >0");
   }
 
   if (rows != values.size() / cols) {
-    throw std::invalid_argument("Matrix must be rectangular");
+    throw std::invalid_argument("matrix must be rectangular");
   }
 
   rows_ = rows;
@@ -46,30 +47,28 @@ Matrix::Matrix(size_t rows, size_t cols, const std::vector<double> &values) {
   }
 }
 
-Matrix::Matrix(size_t n) {
-  data_.assign(n * n, 0.0);
-
-  rows_ = n;
-  cols_ = n;
+matrix matrix::identity(size_t n) {
+  matrix ret(n, n);
 
   for (size_t r = 0; r < n; r++) {
-    data_[r * n + r] = 1.0;
+    ret(r, r) = 1.0;
   }
+  return ret;
 }
 
-double &Matrix::operator()(size_t rows, size_t cols) {
+double &matrix::operator()(size_t rows, size_t cols) {
   if (rows >= rows_ || cols >= cols_ || rows < 0 || cols < 0)
-    throw std::invalid_argument("Matrix indices out of range");
+    throw std::invalid_argument("matrix indices out of range");
   return data_[rows * cols_ + cols];
 }
 
-double Matrix::operator()(size_t rows, size_t cols) const {
+double matrix::operator()(size_t rows, size_t cols) const {
   if (rows >= rows_ || cols >= cols_ || rows < 0 || cols < 0)
-    throw std::invalid_argument("Matrix indices out of range");
+    throw std::invalid_argument("matrix indices out of range");
   return data_[rows * cols_ + cols];
 }
 
-bool Matrix::operator==(const Matrix &other) const {
+bool matrix::operator==(const matrix &other) const {
   if (rows_ != other.rows_ || cols_ != other.cols_)
     return false;
 
@@ -81,13 +80,13 @@ bool Matrix::operator==(const Matrix &other) const {
   return true;
 }
 
-bool Matrix::operator!=(const Matrix &other) const { return !(*this == other); }
+bool matrix::operator!=(const matrix &other) const { return !(*this == other); }
 
-Matrix Matrix::operator+(const Matrix &other) const {
+matrix matrix::operator+(const matrix &other) const {
   if (rows_ != other.rows_ || cols_ != other.cols_)
-    throw std::invalid_argument("Matrix dimensions must match for addition");
+    throw std::invalid_argument("matrix dimensions must match for addition");
 
-  Matrix result(rows_, cols_);
+  matrix result(rows_, cols_);
 
   for (size_t i = 0; i < data_.size(); ++i) {
     result.data_[i] = data_[i] + other.data_[i];
@@ -96,11 +95,11 @@ Matrix Matrix::operator+(const Matrix &other) const {
   return result;
 }
 
-Matrix Matrix::operator-(const Matrix &other) const {
+matrix matrix::operator-(const matrix &other) const {
   if (rows_ != other.rows_ || cols_ != other.cols_)
-    throw std::invalid_argument("Matrix dimensions must match for subtraction");
+    throw std::invalid_argument("matrix dimensions must match for subtraction");
 
-  Matrix result(rows_, cols_);
+  matrix result(rows_, cols_);
 
   for (size_t i = 0; i < data_.size(); ++i) {
     result.data_[i] = data_[i] - other.data_[i];
@@ -109,14 +108,14 @@ Matrix Matrix::operator-(const Matrix &other) const {
   return result;
 }
 
-Matrix Matrix::operator*(const Matrix &other) const {
+matrix matrix::operator*(const matrix &other) const {
   if (this->cols() != other.rows()) {
     throw std::invalid_argument(
         "The number of cols in the first matrix must match the number of rows "
         "in the second for multiplication");
   }
 
-  Matrix result(this->rows(), other.cols());
+  matrix result(this->rows(), other.cols());
 
   const size_t M = this->rows();
   const size_t P = other.cols();
@@ -134,11 +133,11 @@ Matrix Matrix::operator*(const Matrix &other) const {
   return result;
 }
 
-size_t Matrix::rows() const { return rows_; }
+size_t matrix::rows() const { return rows_; }
 
-size_t Matrix::cols() const { return cols_; }
+size_t matrix::cols() const { return cols_; }
 
-void Matrix::swap_rows(size_t r1, size_t r2) {
+void matrix::swap_rows(size_t r1, size_t r2) {
   if (r1 >= rows_ || r1 < 0 || r2 >= rows_ || r2 < 0)
     throw std::invalid_argument("Row out of matrix range");
 
@@ -148,7 +147,7 @@ void Matrix::swap_rows(size_t r1, size_t r2) {
   std::swap_ranges(r1_begin, r1_begin + cols_, r2_begin);
 }
 
-void Matrix::scale_row(size_t r, double scalar) {
+void matrix::scale_row(size_t r, double scalar) {
   if (r >= rows_ || r < 0)
     throw std::invalid_argument("Row out of matrix range");
 
@@ -158,7 +157,7 @@ void Matrix::scale_row(size_t r, double scalar) {
     *it *= scalar;
 }
 
-void Matrix::add_row_multiple(size_t src, size_t dst, double scalar) {
+void matrix::add_row_multiple(size_t src, size_t dst, double scalar) {
   if (src >= rows_ || src < 0)
     throw std::invalid_argument("Source out of matrix range");
 
@@ -173,12 +172,12 @@ void Matrix::add_row_multiple(size_t src, size_t dst, double scalar) {
   }
 }
 
-std::optional<Matrix> Matrix::inverse() const {
-  if (this->rows() != this->cols()) {
+std::optional<matrix> matrix::inverse() const {
+  if (this->rows_ != this->cols_) {
     return std::nullopt;
   }
-  Matrix copy(*this);
-  Matrix inv(rows_);
+  matrix copy(*this);
+  matrix inv = matrix::identity(this->cols_);
 
   size_t lead = 0;
 
@@ -211,11 +210,11 @@ std::optional<Matrix> Matrix::inverse() const {
   return {inv};
 }
 
-double Matrix::determinant() const {
+double matrix::determinant() const {
   if (this->rows() != this->cols()) {
     throw std::invalid_argument("Not a square matrix");
   }
-  Matrix copy(*this);
+  matrix copy(*this);
   double det = 1;
 
   size_t lead = 0;
@@ -248,7 +247,7 @@ double Matrix::determinant() const {
   return det;
 }
 
-void Matrix::rref() {
+void matrix::rref() {
   size_t lead = 0;
 
   for (size_t row = 0; row < rows_; ++row) {
@@ -285,7 +284,7 @@ void Matrix::rref() {
   }
 }
 
-std::ostream &operator<<(std::ostream &os, const Matrix &m) {
+std::ostream &operator<<(std::ostream &os, const matrix &m) {
   for (size_t r = 0; r < m.rows_; ++r) {
     os << "[ ";
     for (size_t c = 0; c < m.cols_; ++c) {
@@ -296,20 +295,22 @@ std::ostream &operator<<(std::ostream &os, const Matrix &m) {
   return os;
 }
 
-Matrix operator*(const Matrix &m, double f) {
-  Matrix result(m.rows_, m.cols_);
+matrix operator*(const matrix &m, double f) {
+  matrix result(m.rows_, m.cols_);
   for (size_t i = 0; i < m.data_.size(); ++i) {
     result.data_[i] = m.data_[i] * f;
   }
   return result;
 }
 
-Matrix operator*(double f, const Matrix &m) { return m * f; }
+matrix operator*(double f, const matrix &m) { return m * f; }
 
-Matrix operator/(const Matrix &m, double f) {
+matrix operator/(const matrix &m, double f) {
   if (std::abs(f) < EPS) {
     throw std::invalid_argument("Division by zero");
   }
 
   return m * (1.0 / f);
 }
+
+} // namespace linalg

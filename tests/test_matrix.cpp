@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <random>
 
-bool isRREF(const Matrix &m) {
+bool isRREF(const linalg::matrix &m) {
   // Check for RREF properties
   // 1. Leading 1s
   // 2. Zeros below and above leading 1s
@@ -55,37 +55,37 @@ bool isRREF(const Matrix &m) {
 }
 
 TEST(isRREF_Test, ValidRREF) {
-  Matrix A({{1, 0, 2, 0}, {0, 1, -1, 0}, {0, 0, 0, 0}});
+  linalg::matrix A({{1, 0, 2, 0}, {0, 1, -1, 0}, {0, 0, 0, 0}});
 
   EXPECT_TRUE(isRREF(A));
 }
 
 TEST(isRREF_Test, InvalidRREF_NonLeadingOne) {
-  Matrix A({{2, 0, 2, 0}, {0, 1, -1, 0}, {0, 0, 0, 0}});
+  linalg::matrix A({{2, 0, 2, 0}, {0, 1, -1, 0}, {0, 0, 0, 0}});
 
   EXPECT_FALSE(isRREF(A));
 }
 
 TEST(isRREF_Test, InvalidRREF_NonZeroAbovePivot) {
-  Matrix A({{1, 0, 2, 0}, {0, 1, -1, 0}, {0, 1, 0, 0}});
+  linalg::matrix A({{1, 0, 2, 0}, {0, 1, -1, 0}, {0, 1, 0, 0}});
 
   EXPECT_FALSE(isRREF(A));
 }
 
 TEST(isRREF_Test, InvalidRREF_PivotNotRight) {
-  Matrix A({{1, 0, 2, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}});
+  linalg::matrix A({{1, 0, 2, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}});
 
   EXPECT_FALSE(isRREF(A));
 }
 
 TEST(isRREF_Test, InvalidRREF_NonZeroRowBelowZeroRow) {
-  Matrix A({{1, 0, 2, 0}, {0, 0, 0, 0}, {0, 1, -1, 0}});
+  linalg::matrix A({{1, 0, 2, 0}, {0, 0, 0, 0}, {0, 1, -1, 0}});
 
   EXPECT_FALSE(isRREF(A));
 }
 
 TEST(MatrixRREF, SimpleAugmented2x3) {
-  Matrix A({{1, 2, 1, 9}, {2, -1, 1, 8}});
+  linalg::matrix A({{1, 2, 1, 9}, {2, -1, 1, 8}});
 
   A.rref();
 
@@ -99,7 +99,7 @@ TEST(MatrixRREF, SimpleAugmented2x3) {
 }
 
 TEST(MatrixRREF, AugmentedWithZeroRow) {
-  Matrix A({{1, 2, 1, 9}, {2, 4, 2, 18}, {0, 0, 0, 0}});
+  linalg::matrix A({{1, 2, 1, 9}, {2, 4, 2, 18}, {0, 0, 0, 0}});
 
   A.rref();
 
@@ -110,7 +110,7 @@ TEST(MatrixRREF, AugmentedWithZeroRow) {
 }
 
 TEST(MatrixRREF, RankDeficientAugmented) {
-  Matrix A({{1, 2, 3, 6}, {2, 4, 6, 12}, {3, 6, 9, 18}});
+  linalg::matrix A({{1, 2, 3, 6}, {2, 4, 6, 12}, {3, 6, 9, 18}});
 
   A.rref();
 
@@ -121,7 +121,7 @@ TEST(MatrixRREF, RankDeficientAugmented) {
 }
 
 TEST(MatrixRREF, FullAugmented3x4) {
-  Matrix A({{2, 1, -1, 8}, {-3, -1, 2, -11}, {-2, 1, 2, -3}});
+  linalg::matrix A({{2, 1, -1, 8}, {-3, -1, 2, -11}, {-2, 1, 2, -3}});
 
   A.rref();
 
@@ -131,7 +131,7 @@ TEST(MatrixRREF, FullAugmented3x4) {
 }
 
 TEST(MatrixRREF, ZeroMatrix) {
-  Matrix A({{0, 0, 0}, {0, 0, 0}, {0, 0, 0}});
+  linalg::matrix A({{0, 0, 0}, {0, 0, 0}, {0, 0, 0}});
 
   A.rref();
 
@@ -141,7 +141,7 @@ TEST(MatrixRREF, ZeroMatrix) {
 }
 
 TEST(MatrixRREF, IdentityMatrix) {
-  Matrix A({{1, 0, 0}, {0, 1, 0}, {0, 0, 1}});
+  linalg::matrix A({{1, 0, 0}, {0, 1, 0}, {0, 0, 1}});
 
   A.rref();
 
@@ -151,7 +151,7 @@ TEST(MatrixRREF, IdentityMatrix) {
 }
 
 TEST(MatrixRREF, InconsistentSystem) {
-  Matrix A({{1, 2, 3, 4}, {2, 4, 6, 9}});
+  linalg::matrix A({{1, 2, 3, 4}, {2, 4, 6, 9}});
 
   A.rref();
 
@@ -163,16 +163,16 @@ TEST(MatrixRREF, InconsistentSystem) {
 }
 
 TEST(MatrixRREF, FreeVariables) {
-  Matrix A({{2, 1, 3, 0, 10}, {1, 1, 1, 0, 7}, {3, 2, 4, 0, 17}});
+  linalg::matrix A({{2, 1, 3, 0, 10}, {1, 1, 1, 0, 7}, {3, 2, 4, 0, 17}});
 
-  Matrix U({{1, 0, 2, 0, 3}, {0, 1, -1, 0, 4}, {0, 0, 0, 0, 0}});
+  linalg::matrix U({{1, 0, 2, 0, 3}, {0, 1, -1, 0, 4}, {0, 0, 0, 0, 0}});
   A.rref();
 
   EXPECT_EQ(A, U);
 }
 
 TEST(MatrixRREF, DimensionsPreserved) {
-  Matrix A({{1, 2, 3}, {4, 5, 6}});
+  linalg::matrix A({{1, 2, 3}, {4, 5, 6}});
 
   size_t original_rows = A.rows();
   size_t original_cols = A.cols();
@@ -184,11 +184,11 @@ TEST(MatrixRREF, DimensionsPreserved) {
 }
 
 TEST(MatrixRREF, ZeroAtBottom) {
-  Matrix A({{0, 0, 0, 0}, {1, 0, 0, 4}, {0, 1, 7, 8}});
+  linalg::matrix A({{0, 0, 0, 0}, {1, 0, 0, 4}, {0, 1, 7, 8}});
 
   A.rref();
 
-  Matrix U({{1, 0, 0, 4}, {0, 1, 7, 8}, {0, 0, 0, 0}});
+  linalg::matrix U({{1, 0, 0, 4}, {0, 1, 7, 8}, {0, 0, 0, 0}});
   EXPECT_EQ(A, U);
 }
 
@@ -201,7 +201,7 @@ protected:
 
 TEST_P(MatrixRREF_RandomTest, RandomMatrices) {
   auto [rows, cols] = GetParam();
-  Matrix A(rows, cols);
+  linalg::matrix A(rows, cols);
   for (size_t r = 0; r < rows; ++r) {
     for (size_t c = 0; c < cols; ++c) {
       // A(r, c) = dis(gen);
@@ -225,180 +225,180 @@ INSTANTIATE_TEST_SUITE_P(
                       std::make_pair(6, 4), std::make_pair(4, 6),
                       std::make_pair(10, 10)));
 
-// Matrix Operation Tests
+// linalg::matrix Operation Tests
 
 TEST(MatrixOperations, Addition) {
-  Matrix A({{1, 2}, {3, 4}});
-  Matrix B({{5, 6}, {7, 8}});
-  Matrix C = A + B;
+  linalg::matrix A({{1, 2}, {3, 4}});
+  linalg::matrix B({{5, 6}, {7, 8}});
+  linalg::matrix C = A + B;
 
-  Matrix C_expected({{6, 8}, {10, 12}});
+  linalg::matrix C_expected({{6, 8}, {10, 12}});
   EXPECT_EQ(C, C_expected);
 }
 
 TEST(MatrixOperations, Subtraction) {
-  Matrix A({{5, 6}, {7, 8}});
-  Matrix B({{1, 2}, {3, 4}});
-  Matrix C = A - B;
+  linalg::matrix A({{5, 6}, {7, 8}});
+  linalg::matrix B({{1, 2}, {3, 4}});
+  linalg::matrix C = A - B;
 
-  Matrix C_expected({{4, 4}, {4, 4}});
+  linalg::matrix C_expected({{4, 4}, {4, 4}});
   EXPECT_EQ(C, C_expected);
 }
 
 TEST(MatrixOperations, Addition_InvalidDimensions) {
-  Matrix A({{1, 2}, {3, 4}});
-  Matrix B({{5, 6, 7}, {8, 9, 10}});
+  linalg::matrix A({{1, 2}, {3, 4}});
+  linalg::matrix B({{5, 6, 7}, {8, 9, 10}});
 
-  EXPECT_THROW({ Matrix C = A + B; }, std::invalid_argument);
+  EXPECT_THROW({ linalg::matrix C = A + B; }, std::invalid_argument);
 }
 
 TEST(MatrixOperations, Subtraction_InvalidDimensions) {
-  Matrix A({{1, 2}, {3, 4}});
-  Matrix B({{5, 6, 7}, {8, 9, 10}});
+  linalg::matrix A({{1, 2}, {3, 4}});
+  linalg::matrix B({{5, 6, 7}, {8, 9, 10}});
 
-  EXPECT_THROW({ Matrix C = A - B; }, std::invalid_argument);
+  EXPECT_THROW({ linalg::matrix C = A - B; }, std::invalid_argument);
 }
 
 TEST(MatrixOperations, Addition_NegativeValues) {
-  Matrix A({{-1, -2}, {-3, -4}});
-  Matrix B({{5, 6}, {7, 8}});
-  Matrix C = A + B;
+  linalg::matrix A({{-1, -2}, {-3, -4}});
+  linalg::matrix B({{5, 6}, {7, 8}});
+  linalg::matrix C = A + B;
 
-  Matrix C_expected({{4, 4}, {4, 4}});
+  linalg::matrix C_expected({{4, 4}, {4, 4}});
   EXPECT_EQ(C, C_expected);
 }
 
 TEST(MatrixOperations, Subtraction_NegativeValues) {
-  Matrix A({{5, 6}, {7, 8}});
-  Matrix B({{-1, -2}, {-3, -4}});
-  Matrix C = A - B;
+  linalg::matrix A({{5, 6}, {7, 8}});
+  linalg::matrix B({{-1, -2}, {-3, -4}});
+  linalg::matrix C = A - B;
 
-  Matrix C_expected({{6, 8}, {10, 12}});
+  linalg::matrix C_expected({{6, 8}, {10, 12}});
   EXPECT_EQ(C, C_expected);
 }
 
 TEST(MatrixOperations, Addition_ZeroMatrix) {
-  Matrix A({{0, 0}, {0, 0}});
-  Matrix B({{5, 6}, {7, 8}});
-  Matrix C = A + B;
+  linalg::matrix A({{0, 0}, {0, 0}});
+  linalg::matrix B({{5, 6}, {7, 8}});
+  linalg::matrix C = A + B;
 
   EXPECT_EQ(C, B);
 }
 
 TEST(MatrixOperations, Subtraction_ZeroMatrix) {
-  Matrix A({{0, 0}, {0, 0}});
-  Matrix B({{5, 6}, {7, 8}});
-  Matrix C = B - A;
+  linalg::matrix A({{0, 0}, {0, 0}});
+  linalg::matrix B({{5, 6}, {7, 8}});
+  linalg::matrix C = B - A;
 
   EXPECT_EQ(C, B);
 }
 
 TEST(MatrixOperations, ScalarMultiplication_FriendFunction) {
-  Matrix A({{1, 2}, {3, 4}});
+  linalg::matrix A({{1, 2}, {3, 4}});
   double scalar = 2.0;
 
-  Matrix B = A * scalar;
-  Matrix C = scalar * A;
+  linalg::matrix B = A * scalar;
+  linalg::matrix C = scalar * A;
 
-  Matrix expected({{2, 4}, {6, 8}});
+  linalg::matrix expected({{2, 4}, {6, 8}});
   EXPECT_EQ(B, expected);
   EXPECT_EQ(C, expected);
 }
 
 TEST(MatrixOperations, ScalarMultiplication_NegativeScalar) {
-  Matrix A({{1, -2}, {-3, 4}});
+  linalg::matrix A({{1, -2}, {-3, 4}});
   double scalar = -2.0;
 
-  Matrix B = A * scalar;
-  Matrix C = scalar * A;
+  linalg::matrix B = A * scalar;
+  linalg::matrix C = scalar * A;
 
-  Matrix expected({{-2, 4}, {6, -8}});
+  linalg::matrix expected({{-2, 4}, {6, -8}});
   EXPECT_EQ(B, expected);
   EXPECT_EQ(C, expected);
 }
 
 TEST(MatrixOperations, ScalarMultiplication_ZeroScalar) {
-  Matrix A({{1, 2}, {3, 4}});
+  linalg::matrix A({{1, 2}, {3, 4}});
   double scalar = 0.0;
 
-  Matrix B = A * scalar;
-  Matrix C = scalar * A;
+  linalg::matrix B = A * scalar;
+  linalg::matrix C = scalar * A;
 
-  Matrix expected({{0, 0}, {0, 0}});
+  linalg::matrix expected({{0, 0}, {0, 0}});
   EXPECT_EQ(B, expected);
   EXPECT_EQ(C, expected);
 }
 
 TEST(MatrixOperations, ScalarMultiplication_FractionalScalar) {
-  Matrix A({{2, 4}, {6, 8}});
+  linalg::matrix A({{2, 4}, {6, 8}});
   double scalar = 0.5;
 
-  Matrix B = A * scalar;
-  Matrix C = scalar * A;
+  linalg::matrix B = A * scalar;
+  linalg::matrix C = scalar * A;
 
-  Matrix expected({{1, 2}, {3, 4}});
+  linalg::matrix expected({{1, 2}, {3, 4}});
   EXPECT_EQ(B, expected);
   EXPECT_EQ(C, expected);
 }
 
 TEST(MatrixOperations, ScalarDivision_FriendFunction) {
-  Matrix A({{2, 4}, {6, 8}});
+  linalg::matrix A({{2, 4}, {6, 8}});
   double scalar = 2.0;
 
-  Matrix B = A / scalar;
+  linalg::matrix B = A / scalar;
 
-  Matrix expected({{1, 2}, {3, 4}});
+  linalg::matrix expected({{1, 2}, {3, 4}});
   EXPECT_EQ(B, expected);
 }
 
 TEST(MatrixOperations, ScalarDivision_ByZero) {
-  Matrix A({{2, 4}, {6, 8}});
+  linalg::matrix A({{2, 4}, {6, 8}});
   double scalar = 0.0;
 
-  EXPECT_THROW({ Matrix B = A / scalar; }, std::invalid_argument);
+  EXPECT_THROW({ linalg::matrix B = A / scalar; }, std::invalid_argument);
 }
 
 TEST(MatrixOperations, ScalarDivision_NegativeScalar) {
-  Matrix A({{2, -4}, {-6, 8}});
+  linalg::matrix A({{2, -4}, {-6, 8}});
   double scalar = -2.0;
 
-  Matrix B = A / scalar;
+  linalg::matrix B = A / scalar;
 
-  Matrix expected({{-1, 2}, {3, -4}});
+  linalg::matrix expected({{-1, 2}, {3, -4}});
   EXPECT_EQ(B, expected);
 }
 
 TEST(MatrixOperations, ScalarDivision_FractionalScalar) {
-  Matrix A({{1, 2}, {3, 4}});
+  linalg::matrix A({{1, 2}, {3, 4}});
   double scalar = 0.5;
 
-  Matrix B = A / scalar;
+  linalg::matrix B = A / scalar;
 
-  Matrix expected({{2, 4}, {6, 8}});
+  linalg::matrix expected({{2, 4}, {6, 8}});
   EXPECT_EQ(B, expected);
 }
 
 TEST(MatrixOperations, Multiplication) {
-  Matrix A({{1, 2, 3}, {4, 5, 6}});
-  Matrix B({{7, 8}, {9, 10}, {11, 12}});
-  Matrix C = A * B;
+  linalg::matrix A({{1, 2, 3}, {4, 5, 6}});
+  linalg::matrix B({{7, 8}, {9, 10}, {11, 12}});
+  linalg::matrix C = A * B;
 
-  Matrix C_expected({{58, 64}, {139, 154}});
+  linalg::matrix C_expected({{58, 64}, {139, 154}});
   EXPECT_EQ(C, C_expected);
 }
 
 TEST(MatrixOperations, Multiplication_InvalidDimensions) {
-  Matrix A({{1, 2, 3}, {4, 5, 6}});
-  Matrix B({{5, 6}, {7, 8}});
+  linalg::matrix A({{1, 2, 3}, {4, 5, 6}});
+  linalg::matrix B({{5, 6}, {7, 8}});
 
-  EXPECT_THROW({ Matrix C = A * B; }, std::invalid_argument);
+  EXPECT_THROW({ linalg::matrix C = A * B; }, std::invalid_argument);
 }
 
 TEST(MatrixOperations, Inverse) {
-  Matrix A({{4, 7}, {2, 6}});
-  Matrix A_inv = A.inverse().value();
+  linalg::matrix A({{4, 7}, {2, 6}});
+  linalg::matrix A_inv = A.inverse().value();
 
-  Matrix A_inv_expected({{0.6, -0.7}, {-0.2, 0.4}});
+  linalg::matrix A_inv_expected({{0.6, -0.7}, {-0.2, 0.4}});
   for (size_t r = 0; r < A_inv.rows(); ++r) {
     for (size_t c = 0; c < A_inv.cols(); ++c) {
       EXPECT_DOUBLE_EQ(A_inv(r, c), A_inv_expected(r, c));
@@ -407,18 +407,18 @@ TEST(MatrixOperations, Inverse) {
 }
 
 TEST(MatrixOperations, InverseIdentity) {
-  Matrix I({{1, 0}, {0, 1}});
-  Matrix I_inv = I.inverse().value();
+  linalg::matrix I({{1, 0}, {0, 1}});
+  linalg::matrix I_inv = I.inverse().value();
 
   EXPECT_EQ(I_inv, I);
 }
 
 TEST(MatrixOperations, InverseMultIsIdentity) {
-  Matrix A({{3, 0}, {0, 2}});
-  Matrix A_inv = A.inverse().value();
-  Matrix I = A * A_inv;
+  linalg::matrix A({{3, 0}, {0, 2}});
+  linalg::matrix A_inv = A.inverse().value();
+  linalg::matrix I = A * A_inv;
 
-  Matrix I_expected({{1, 0}, {0, 1}});
+  linalg::matrix I_expected({{1, 0}, {0, 1}});
   for (size_t r = 0; r < I.rows(); ++r) {
     for (size_t c = 0; c < I.cols(); ++c) {
       EXPECT_DOUBLE_EQ(I(r, c), I_expected(r, c));
@@ -427,60 +427,60 @@ TEST(MatrixOperations, InverseMultIsIdentity) {
 }
 
 TEST(MatrixOperations, InverseNonSquareMatrix) {
-  Matrix A({{1, 2, 3}, {4, 5, 6}});
+  linalg::matrix A({{1, 2, 3}, {4, 5, 6}});
 
   EXPECT_EQ(A.inverse(), std::nullopt);
 }
 
 TEST(MatrixOperations, InverseInvertableMatrix) {
-  Matrix A({{2, 2}, {2, 2}});
+  linalg::matrix A({{2, 2}, {2, 2}});
 
   EXPECT_EQ(A.inverse(), std::nullopt);
 
-  Matrix B({{1, 0, 1}, {0, 4, 8}, {0, 2, 4}});
+  linalg::matrix B({{1, 0, 1}, {0, 4, 8}, {0, 2, 4}});
 
   EXPECT_EQ(A.inverse(), std::nullopt);
 }
 
 TEST(MatrixOperations, DeterminantSimple) {
-  Matrix A({{1, 0}, {0, 1}});
+  linalg::matrix A({{1, 0}, {0, 1}});
   EXPECT_DOUBLE_EQ(A.determinant(), 1.0);
 
-  Matrix B({{4, 2}, {4, 1}});
+  linalg::matrix B({{4, 2}, {4, 1}});
   EXPECT_DOUBLE_EQ(B.determinant(), -4.0);
 
-  Matrix C({{1, -1}, {0, 1}});
+  linalg::matrix C({{1, -1}, {0, 1}});
   EXPECT_DOUBLE_EQ(C.determinant(), 1.0);
 
-  Matrix D({{1, 1}, {1, 1}});
+  linalg::matrix D({{1, 1}, {1, 1}});
   EXPECT_DOUBLE_EQ(D.determinant(), 0.0);
 }
 
 TEST(MatrixOperations, Determinant3x3) {
-  Matrix A({{5, 4, 3}, {7, 2, 6}, {1, 8, 9}});
+  linalg::matrix A({{5, 4, 3}, {7, 2, 6}, {1, 8, 9}});
   EXPECT_DOUBLE_EQ(A.determinant(), -216.0);
 
-  Matrix B({{7, 7, 7}, {7, 7, 9}, {7, 1, 4}});
+  linalg::matrix B({{7, 7, 7}, {7, 7, 9}, {7, 1, 4}});
   EXPECT_DOUBLE_EQ(B.determinant(), 84.0);
 }
 
 TEST(MatrixOperations, RandDeficienDetZero) {
-  Matrix A({{4, 1}, {0, 0}});
+  linalg::matrix A({{4, 1}, {0, 0}});
   EXPECT_DOUBLE_EQ(A.determinant(), 0);
 
-  Matrix B({{4, 1, 6}, {8, 2, 12}, {2, 0.5, 3}});
+  linalg::matrix B({{4, 1, 6}, {8, 2, 12}, {2, 0.5, 3}});
   EXPECT_DOUBLE_EQ(B.determinant(), 0);
 }
 
 TEST(MatrixOperations, FlippedRowNotZero) {
-  Matrix A({{0, 1}, {1, 1}});
+  linalg::matrix A({{0, 1}, {1, 1}});
   EXPECT_DOUBLE_EQ(A.determinant(), -1.0);
 }
 
 TEST(MatrixCreation, From2DVector_Valid) {
   std::vector<std::vector<double>> values = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
-  Matrix A(values);
+  linalg::matrix A(values);
 
   EXPECT_EQ(A.rows(), 3);
   EXPECT_EQ(A.cols(), 3);
@@ -492,29 +492,29 @@ TEST(MatrixCreation, From2DVector_Valid) {
 TEST(MatrixCreation, From2DVector_NonRectangular) {
   std::vector<std::vector<double>> values = {{1, 2, 3}, {4, 5}, {6, 7, 8}};
 
-  EXPECT_THROW({ Matrix A(values); }, std::invalid_argument);
+  EXPECT_THROW({ linalg::matrix A(values); }, std::invalid_argument);
 }
 
 TEST(MatrixCreation, From2DVector_Empty) {
   std::vector<std::vector<double>> values = {};
 
-  EXPECT_THROW({ Matrix A(values); }, std::invalid_argument);
+  EXPECT_THROW({ linalg::matrix A(values); }, std::invalid_argument);
 }
 
 TEST(MatrixCreation, From1DVector_InvalidSize) {
   std::vector<double> values = {1, 2, 3, 4, 5};
 
-  EXPECT_THROW({ Matrix A(2, 3, values); }, std::invalid_argument);
+  EXPECT_THROW({ linalg::matrix A(2, 3, values); }, std::invalid_argument);
 }
 
 TEST(MatrixCreation, From1DVector_Empty) {
   std::vector<double> values = {};
 
-  EXPECT_THROW({ Matrix A(2, 2, values); }, std::invalid_argument);
+  EXPECT_THROW({ linalg::matrix A(2, 2, values); }, std::invalid_argument);
 }
 
 TEST(MatrixAccess, OutOfBounds) {
-  Matrix A({{1, 2}, {3, 4}});
+  linalg::matrix A({{1, 2}, {3, 4}});
 
   EXPECT_THROW({ double val = A(2, 0); }, std::invalid_argument);
   EXPECT_THROW({ double val = A(0, 2); }, std::invalid_argument);

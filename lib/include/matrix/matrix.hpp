@@ -1,40 +1,43 @@
 #pragma once
+
 #include <cstddef>
 #include <optional>
 #include <stdexcept>
 #include <vector>
 
-class Matrix {
+namespace linalg {
+
+class matrix {
 public:
-  Matrix(size_t rows, size_t cols);
+  matrix(size_t rows, size_t cols);
 
-  Matrix(const std::vector<std::vector<double>> &values);
+  matrix(const std::vector<std::vector<double>> &values);
 
-  Matrix(size_t rows, size_t cols, const std::vector<double> &values);
+  matrix(size_t rows, size_t cols, const std::vector<double> &values);
 
-  Matrix(const Matrix &other) noexcept
+  matrix(const matrix &other) noexcept
       : data_(other.data_), rows_(other.rows_), cols_(other.cols_) {}
 
-  Matrix(Matrix &&other) noexcept
+  matrix(matrix &&other) noexcept
       : data_(std::move(other.data_)), rows_(other.rows_), cols_(other.cols_) {}
 
-  explicit Matrix(size_t n);
+  static matrix identity(size_t n);
 
   double &operator()(size_t rows, size_t cols);
   double operator()(size_t rows, size_t cols) const;
 
-  bool operator==(const Matrix &other) const;
-  bool operator!=(const Matrix &other) const;
+  bool operator==(const matrix &other) const;
+  bool operator!=(const matrix &other) const;
 
-  Matrix operator+(const Matrix &other) const;
-  Matrix operator-(const Matrix &other) const;
+  matrix operator+(const matrix &other) const;
+  matrix operator-(const matrix &other) const;
 
-  Matrix operator*(const Matrix &other) const;
+  matrix operator*(const matrix &other) const;
 
   size_t rows() const;
   size_t cols() const;
 
-  std::optional<Matrix> inverse() const;
+  std::optional<matrix> inverse() const;
   double determinant() const;
 
   void rref();
@@ -44,14 +47,18 @@ private:
   void scale_row(size_t r, double scalar);
   void add_row_multiple(size_t src, size_t dst, double scalar);
 
-  friend std::ostream &operator<<(std::ostream &os, const Matrix &m);
+  friend std::ostream &operator<<(std::ostream &os, const matrix &m);
 
-  friend Matrix operator*(const Matrix &m, double f);
-  friend Matrix operator*(double f, const Matrix &m);
+  friend matrix operator*(const matrix &m, double f);
+  friend matrix operator*(double f, const matrix &m);
 
-  friend Matrix operator/(const Matrix &m, double f);
+  friend matrix operator/(const matrix &m, double f);
 
   size_t rows_;
   size_t cols_;
   std::vector<double> data_;
 };
+
+matrix identity(size_t n);
+
+} // namespace linalg
