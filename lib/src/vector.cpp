@@ -44,4 +44,46 @@ std::optional<double> vector::dot_product(const vector &other) const {
   return {prod};
 }
 
+vector vector::operator+(const vector &other) const {
+  size_t sz = (this->size_ < other.size_) ? this->size_ : other.size_;
+
+  vector v(sz);
+
+  for (size_t i = 0; i < sz; i++) {
+    v.data_[i] = this->data_[i] + other.data_[i];
+  }
+
+  return v;
+}
+
+vector vector::operator-(const vector &other) const {
+  size_t sz = (this->size_ < other.size_) ? this->size_ : other.size_;
+
+  vector v(sz);
+
+  for (size_t i = 0; i < sz; i++) {
+    v.data_[i] = this->data_[i] - other.data_[i];
+  }
+
+  return v;
+}
+
+double &vector::operator[](size_t i) { return this->data_[i]; }
+
+const double &vector::operator[](size_t i) const { return this->data_[i]; }
+
+vector operator*(const vector &v, double f) {
+  vector ret = {};
+  ret.data_.reserve(v.size_);
+
+  for (const auto &d : v.data_) {
+    ret.data_.push_back(d * f);
+  }
+  return ret;
+}
+
+vector operator*(double f, const vector &v) { return operator*(v, f); }
+
+vector operator/(const vector &v, double f) { return operator*(v, 1 / f); }
+
 } // namespace linalg
