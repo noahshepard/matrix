@@ -3,6 +3,6 @@ add_executable(matrix_app
 )
 
 target_link_libraries(matrix_app
-    PRIVATE matrix
+    PRIVATE linalg
 )
 

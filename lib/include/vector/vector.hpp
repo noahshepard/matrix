@@ -1,4 +1,5 @@
 #pragma once
+#include "matrix/matrix.hpp"
 #include <vector>
 
 namespace linalg {
@@ -8,8 +9,6 @@ public:
   vector() : data_(), size_(0) {}
 
   vector(const std::vector<double> &vec) : data_(vec), size_(vec.size()) {}
-  vector(const std::vector<int> &vec);
-
   vector(std::vector<double> &&vec)
       : data_(std::move(vec)), size_(data_.size()) {}
 
@@ -23,6 +22,9 @@ public:
 
   std::optional<double> dot_product(const vector &other) const;
 
+  bool operator==(const vector &other) const;
+  bool operator!=(const vector &other) const;
+
   vector operator+(const vector &other) const;
   vector operator-(const vector &other) const;
 
@@ -34,6 +36,8 @@ private:
   friend vector operator*(double f, const vector &v);
 
   friend vector operator/(const vector &v, double f);
+
+  friend vector operator*(const matrix &mat, const vector &vec);
 
   std::vector<double> data_;
   size_t size_;

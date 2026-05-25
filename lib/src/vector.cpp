@@ -1,14 +1,7 @@
-#include "vector.hpp"
+#include "vector/vector.hpp"
+#include "constants.hpp"
 
 namespace linalg {
-
-vector::vector(const std::vector<int> &vec) {
-  this->size_ = vec.size();
-  this->data_.reserve(this->size_);
-  for (const int &num : vec) {
-    this->data_.push_back(static_cast<double>(num));
-  }
-}
 
 double vector::magnitude() const {
   double sum = 0;
@@ -44,6 +37,22 @@ std::optional<double> vector::dot_product(const vector &other) const {
   return {prod};
 }
 
+bool vector::operator==(const vector &other) const {
+  if (this->size_ != other.size_) {
+    return false;
+  }
+
+  for (size_t i = 0; i < this->size_; ++i) {
+    if (abs(this->data_[i] - other.data_[i]) > EPS) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool vector::operator!=(const vector &other) const { return !(*this == other); }
+
 vector vector::operator+(const vector &other) const {
   size_t sz = (this->size_ < other.size_) ? this->size_ : other.size_;
 
@@ -75,6 +84,7 @@ const double &vector::operator[](size_t i) const { return this->data_[i]; }
 vector operator*(const vector &v, double f) {
   vector ret = {};
   ret.data_.reserve(v.size_);
+  ret.size_ = v.size_;
 
   for (const auto &d : v.data_) {
     ret.data_.push_back(d * f);
@@ -85,5 +95,27 @@ vector operator*(const vector &v, double f) {
 vector operator*(double f, const vector &v) { return operator*(v, f); }
 
 vector operator/(const vector &v, double f) { return operator*(v, 1 / f); }
+
+vector operator*(const matrix &mat, const vector &vec) {
+
+  if (vec.size_ != mat.cols()) {
+    throw std::invalid_argument("Wrong transformation size");
+  }
+
+  size_t n = vec.size_;
+  size_t m = mat.rows();
+
+  vector ret(m);
+  // m x n, n x 1
+  // n -> m
+
+  for (size_t i = 0; i < m; i++) {
+    for (size_t j = 0; j < n; j++) {
+      ret.data_[i] += (mat(i, j) * vec.data_[j]);
+    }
+  }
+
+  return ret;
+}
 
 } // namespace linalg

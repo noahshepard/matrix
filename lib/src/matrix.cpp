@@ -109,17 +109,17 @@ matrix matrix::operator-(const matrix &other) const {
 }
 
 matrix matrix::operator*(const matrix &other) const {
-  if (this->cols() != other.rows()) {
+  if (this->cols_ != other.rows_) {
     throw std::invalid_argument(
         "The number of cols in the first matrix must match the number of rows "
         "in the second for multiplication");
   }
 
-  matrix result(this->rows(), other.cols());
+  matrix result(this->rows_, other.cols_);
 
-  const size_t M = this->rows();
-  const size_t P = other.cols();
-  const size_t N = this->cols();
+  const size_t M = this->rows_;
+  const size_t P = other.cols_;
+  const size_t N = this->cols_;
 
   for (size_t i = 0; i < M; ++i) {
     for (size_t j = 0; j < P; ++j) {
