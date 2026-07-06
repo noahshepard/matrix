@@ -223,7 +223,8 @@ INSTANTIATE_TEST_SUITE_P(
                       std::make_pair(4, 4), std::make_pair(5, 5),
                       std::make_pair(3, 5), std::make_pair(5, 3),
                       std::make_pair(6, 4), std::make_pair(4, 6),
-                      std::make_pair(10, 10)));
+                      std::make_pair(10, 10), std::make_pair(30, 30),
+                      std::make_pair(1, 20), std::make_pair(100, 100)));
 
 // linalg::matrix Operation Tests
 
